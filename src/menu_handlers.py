@@ -112,7 +112,7 @@ def clear_db():
         print("База данных полностью удалена. Программа завершена.")
         exit()
 
-    lock_until = datetime.now() + timedelta(minutes=1)
+    lock_until = datetime.now() + timedelta(hours=1)
     add_new_data_settings("lock_until", lock_until.isoformat())
     print("Неверный пароль! Доступ заблокирован на 1 час.")
     exit()

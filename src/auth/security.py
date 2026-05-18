@@ -17,7 +17,7 @@ def check_bruteforce_protection(lock_until_str):
     failed_count = int(failed_str) if failed_str else 0
 
     if failed_count >= 3 and not lock_until_str:
-        lock_until = datetime.now() + timedelta(minutes=1)
+        lock_until = datetime.now() + timedelta(hours=1)
         add_new_data_settings("lock_until", lock_until.isoformat())
         print("Слишком много неверных попыток. Доступ заблокирован на 1 час.")
         exit()
@@ -100,7 +100,7 @@ def handle_regular_login(master_password_hash):
             print(f"\nПодсказка❗ {help_hint}")
 
         if count == 0:
-            lock_until = datetime.now() + timedelta(minutes=1)
+            lock_until = datetime.now() + timedelta(hours=1)
             add_new_data_settings("lock_until", lock_until.isoformat())
             print("Вы истратили все попытки. Попробуйте через 1 час.")
             exit()
