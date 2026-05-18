@@ -1,5 +1,5 @@
 from crypto.password_encrypt import encrypt_password, decrypt_password
-from crypto.password_hesh import check_master_password
+from crypto.password_hash import check_master_password
 from datetime import datetime, timedelta
 from src.db.models import (
     delete_application_by_id,

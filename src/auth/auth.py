@@ -1,4 +1,4 @@
-from src.crypto.password_hesh import hash_master_password
+from src.crypto.password_hash import hash_master_password
 from src.db.models import get_setting_value, add_new_data_settings
 from src.auth.security import (
     check_bruteforce_protection,

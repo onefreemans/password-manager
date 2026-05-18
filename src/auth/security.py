@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from src.crypto.password_hesh import check_master_password
+from src.crypto.password_hash import check_master_password
 from src.db.models import (
     get_setting_value,
     add_new_data_settings,
