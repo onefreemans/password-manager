@@ -1,20 +1,21 @@
-import sqlite3
+from sqlcipher3 import dbapi2 as sqlite3
 import os
 
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "tracker.db")
 
 
-def get_db():
+def get_db(password_db):
     """Создаёт и возвращает соединение с SQLite."""
     conn = sqlite3.connect(DB_PATH)
+    conn.execute(f"PRAGMA key = '{password_db}'")
     conn.row_factory = sqlite3.Row
     return conn
 
 
-def init_db():
+def init_db(password_db):
     """Создаёт таблицы, если их ещё нет."""
-    conn = get_db()
+    conn = get_db(password_db)
     cursor = conn.cursor()
 
     cursor.execute("""

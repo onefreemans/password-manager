@@ -7,22 +7,27 @@ from src.menu_handlers import (
 )
 from src.db.database import init_db
 from src.auth.auth import create_master_password, verify_master_password
-from src.db.models import get_setting_value
+import os
+from src.db.database import DB_PATH
+from src.auth.db_auth import create_password_db, verify_password_db
 
 
 def main():
     """Создает мастер пароль или проверяет его на правильность"""
-    init_db()
-    if not get_setting_value("master_password"):
-        input_master_password = create_master_password()
-        show_menu(input_master_password)
+    if not os.path.exists(DB_PATH):
+        input_password_db = create_password_db()
+        init_db(input_password_db)
+        input_master_password = create_master_password(input_password_db)
+        show_menu(input_master_password, input_password_db)
 
     else:
-        input_master_password = verify_master_password()
-        show_menu(input_master_password)
+        input_password_db = verify_password_db()
+        init_db(input_password_db)
+        input_master_password = verify_master_password(input_password_db)
+        show_menu(input_master_password, input_password_db)
 
 
-def break_menu_and_exit(input_master_password):
+def break_menu_and_exit(input_master_password, password_db):
     """Определяет вернуться ли после вызова в меню или нет"""
     number_menu = input("\nВернутся в меню?(Что угодно - да|0 - выход: ")
     match number_menu:
@@ -30,10 +35,10 @@ def break_menu_and_exit(input_master_password):
             exit()
 
         case _:
-            show_menu(input_master_password)
+            show_menu(input_master_password, password_db)
 
 
-def show_menu(input_master_password):
+def show_menu(input_master_password, password_db):
     """Меню менеджера паролей"""
     while True:
         print("""
@@ -54,24 +59,24 @@ def show_menu(input_master_password):
 
         match number_menu:
             case 1:
-                handle_add(input_master_password)
-                break_menu_and_exit(input_master_password)
+                handle_add(input_master_password, password_db)
+                break_menu_and_exit(input_master_password, password_db)
 
             case 2:
-                handle_show_all(input_master_password)
-                break_menu_and_exit(input_master_password)
+                handle_show_all(input_master_password, password_db)
+                break_menu_and_exit(input_master_password, password_db)
 
             case 3:
-                handle_search(input_master_password)
-                break_menu_and_exit(input_master_password)
+                handle_search(input_master_password, password_db)
+                break_menu_and_exit(input_master_password, password_db)
 
             case 4:
-                handle_delete()
-                break_menu_and_exit(input_master_password)
+                handle_delete(password_db)
+                break_menu_and_exit(input_master_password, password_db)
 
             case 5:
-                clear_db()
-                break_menu_and_exit(input_master_password)
+                clear_db(password_db)
+                break_menu_and_exit(input_master_password, password_db)
 
             case 0:
                 exit()

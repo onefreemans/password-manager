@@ -1,9 +1,9 @@
 from src.db.database import get_db
 
 
-def add_new_data(site_name, link, login, password_encryption):
+def add_new_data(site_name, link, login, password_encryption, password_db):
     """Создаёт новые данные в 'applications'"""
-    conn = get_db()
+    conn = get_db(password_db)
     cursor = conn.cursor()
 
     cursor.execute(
@@ -17,9 +17,9 @@ def add_new_data(site_name, link, login, password_encryption):
     conn.close()
 
 
-def add_new_data_settings(key, value):
+def add_new_data_settings(key, value, password_db):
     """Создаёт новые данные в 'settings'"""
-    conn = get_db()
+    conn = get_db(password_db)
     cursor = conn.cursor()
 
     cursor.execute(
@@ -33,9 +33,9 @@ def add_new_data_settings(key, value):
     conn.close()
 
 
-def get_setting_value(key):
+def get_setting_value(key, password_db):
     """Получает значение key из базы данны"""
-    conn = get_db()
+    conn = get_db(password_db)
     cursor = conn.cursor()
     cursor.execute("SELECT value FROM settings WHERE key = ?", (key,))
     row = cursor.fetchone()
@@ -45,9 +45,9 @@ def get_setting_value(key):
     return None
 
 
-def get_all_applications():
+def get_all_applications(password_db):
     """Возвращает все записи таблицы"""
-    conn = get_db()
+    conn = get_db(password_db)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM applications")
     row = cursor.fetchall()
@@ -57,9 +57,9 @@ def get_all_applications():
     return []
 
 
-def search_application_by_site(site_name):
+def search_application_by_site(site_name, password_db):
     """Поиск по имени сайта в таблице"""
-    conn = get_db()
+    conn = get_db(password_db)
     cursor = conn.cursor()
     cursor.execute(
         "SELECT * FROM applications WHERE site_name LIKE ?", (f"%{site_name}%",)
@@ -71,9 +71,9 @@ def search_application_by_site(site_name):
     return []
 
 
-def delete_application_by_id(app_id):
+def delete_application_by_id(app_id, password_db):
     """Удаление записи из базы данных"""
-    conn = get_db()
+    conn = get_db(password_db)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM applications WHERE id = ?", (app_id,))
     conn.commit()
@@ -83,9 +83,9 @@ def delete_application_by_id(app_id):
     return False
 
 
-def delete_settings_by_all():
+def delete_settings_by_all(password_db):
     """Очистка таблицы настроек"""
-    conn = get_db()
+    conn = get_db(password_db)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM settings")
     conn.commit()
@@ -95,9 +95,9 @@ def delete_settings_by_all():
     return False
 
 
-def delete_settings_by_key(key):
+def delete_settings_by_key(key, password_db):
     """Удалить запись по значению поля value"""
-    conn = get_db()
+    conn = get_db(password_db)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM settings WHERE key = ?", (key,))
     conn.commit()
@@ -107,9 +107,9 @@ def delete_settings_by_key(key):
     return False
 
 
-def delete_all_applications():
+def delete_all_applications(password_db):
     """Полное удаление всех записей в таблице applications"""
-    conn = get_db()
+    conn = get_db(password_db)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM applications")
     conn.commit()
@@ -119,13 +119,13 @@ def delete_all_applications():
     return False
 
 
-def increment_failed_attempts():
+def increment_failed_attempts(password_db):
     """Увеличивает счётчик неудачных попыток на 1. Возвращает новое значение."""
-    count_str = get_setting_value("failed_attempts")
+    count_str = get_setting_value("failed_attempts", password_db)
     count = int(count_str) if count_str else 0
     count += 1
     # Если запись есть — обновляем, если нет — создаём
-    conn = get_db()
+    conn = get_db(password_db)
     cursor = conn.cursor()
     cursor.execute("SELECT key FROM settings WHERE key = 'failed_attempts'")
     if cursor.fetchone():
@@ -142,6 +142,6 @@ def increment_failed_attempts():
     return count
 
 
-def reset_failed_attempts():
+def reset_failed_attempts(password_db):
     """Сбрасывает счётчик неудачных попыток."""
-    delete_settings_by_key("failed_attempts")
+    delete_settings_by_key("failed_attempts", password_db)
