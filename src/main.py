@@ -8,7 +8,8 @@ from src.menu_handlers import (
 from src.auth.auth import create_master_password, verify_master_password
 from src.db.database import DB_PATH, init_db
 from src.auth.db_auth import create_password_db, verify_password_db
-import os
+from src.utils.idle_timer import reset, clear_console
+import os, time
 
 
 def main():
@@ -17,12 +18,18 @@ def main():
         input_password_db = create_password_db()
         init_db(input_password_db)
         input_master_password = create_master_password(input_password_db)
+        reset()
+        time.sleep(1)
+        clear_console()
         show_menu(input_master_password, input_password_db)
 
     else:
         input_password_db = verify_password_db()
         init_db(input_password_db)
         input_master_password = verify_master_password(input_password_db)
+        reset()
+        time.sleep(1)
+        clear_console()
         show_menu(input_master_password, input_password_db)
 
 
@@ -34,6 +41,7 @@ def break_menu_and_exit(input_master_password, password_db):
             exit()
 
         case _:
+            reset()
             show_menu(input_master_password, password_db)
 
 
