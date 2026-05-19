@@ -5,11 +5,10 @@ from src.menu_handlers import (
     handle_delete,
     clear_db,
 )
-from src.db.database import init_db
 from src.auth.auth import create_master_password, verify_master_password
-import os
-from src.db.database import DB_PATH
+from src.db.database import DB_PATH, init_db
 from src.auth.db_auth import create_password_db, verify_password_db
+import os
 
 
 def main():

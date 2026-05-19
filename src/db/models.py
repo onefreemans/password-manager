@@ -83,35 +83,11 @@ def delete_application_by_id(app_id, password_db):
     return False
 
 
-def delete_settings_by_all(password_db):
-    """Очистка таблицы настроек"""
-    conn = get_db(password_db)
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM settings")
-    conn.commit()
-    conn.close()
-    if cursor.rowcount > 0:
-        return True
-    return False
-
-
 def delete_settings_by_key(key, password_db):
     """Удалить запись по значению поля value"""
     conn = get_db(password_db)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM settings WHERE key = ?", (key,))
-    conn.commit()
-    conn.close()
-    if cursor.rowcount > 0:
-        return True
-    return False
-
-
-def delete_all_applications(password_db):
-    """Полное удаление всех записей в таблице applications"""
-    conn = get_db(password_db)
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM applications")
     conn.commit()
     conn.close()
     if cursor.rowcount > 0:

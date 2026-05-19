@@ -1,13 +1,14 @@
 from src.crypto.password_encrypt import encrypt_password, decrypt_password
 from src.crypto.password_hash import check_master_password
 from datetime import datetime, timedelta
+from src.auth.db_auth import JSON_PATH
+from src.db.database import DB_PATH
+import os
 from src.db.models import (
     delete_application_by_id,
     add_new_data,
     get_all_applications,
     search_application_by_site,
-    delete_settings_by_all,
-    delete_all_applications,
     get_setting_value,
     add_new_data_settings,
 )
@@ -93,7 +94,7 @@ def handle_delete(password_db):
             print("Ошибка при попытке удалить запись.")
 
 
-def clear_db(password_db):
+def clear_db(password_db): #TODO: вырезать проверку и блокировку в отдельную функцию
     """Очистка всей базы данных. Требует мастер-пароль с одной попытки."""
     print(
         "==!!!ВНИМАНИЕ!!!== Все данные будут безвозвратно удалены! ==!!!ВНИМАНИЕ!!!=="
@@ -110,12 +111,12 @@ def clear_db(password_db):
         return
 
     elif check_master_password(input_pass, master_password_hash):
-        delete_settings_by_all(password_db)
-        delete_all_applications(password_db)
+        os.remove(DB_PATH)
+        os.remove(JSON_PATH)
         print("База данных полностью удалена. Программа завершена.")
         exit()
 
-    lock_until = datetime.now() + timedelta(hours=1)
+    lock_until = datetime.now() + timedelta(hours=1) #TODO: блокировка
     add_new_data_settings("lock_until", lock_until.isoformat(), password_db)
     print("Неверный пароль! Доступ заблокирован на 1 час.")
     exit()

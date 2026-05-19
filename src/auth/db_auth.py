@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime, timedelta
-
+from src.db.database import DB_PATH
 
 JSON_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "db", "auth.json")
 
@@ -25,7 +25,7 @@ def create_password_db():
     print("Создание пароля для шифрования базы данных.")
     while True:
         password = input("Введите пароль для шифрования БД: ")
-        if len(password) >= 5:
+        if len(password) >= 3:
             from src.crypto.password_hash import hash_master_password
 
             hashed = hash_master_password(password)
@@ -40,7 +40,7 @@ def create_password_db():
             print("Пароль для БД создан успешно!")
             return password
         else:
-            print("\nПароль должен быть не менее 5 символов!\n")
+            print("\nПароль должен быть не менее 3 символов!\n")
 
 
 def verify_password_db():
@@ -67,7 +67,9 @@ def verify_password_db():
                     _save_auth({**auth, "failed_attempts": 0, "lock_until": None})
                     return password
                 print("Неверный пароль БД.\n")
-            print("Финальные попытки исчерпаны. Программа завершена.")
+            print("Финальные попытки исчерпаны. Все данные удалены.")
+            os.remove(DB_PATH)
+            os.remove(JSON_PATH)
             exit()
 
     # Обычная проверка
@@ -78,6 +80,10 @@ def verify_password_db():
 
     while count > 0:
         password = input("Введите пароль БД: ")
+        if not password.strip():
+            print("❌ Пароль не может быть пустым!\n")
+            continue
+
         if check_master_password(password, db_password_hash):
             _save_auth({**auth, "failed_attempts": 0, "lock_until": None})
             return password
@@ -87,7 +93,7 @@ def verify_password_db():
         _save_auth(auth)
 
         if count == 0:
-            lock_until = datetime.now() + timedelta(hours=1)
+            lock_until = datetime.now() + timedelta(hours=1) #TODO: блокировка
             _save_auth({**auth, "lock_until": lock_until.isoformat()})
             print("Неверный пароль БД. Доступ заблокирован на 1 час.")
             exit()

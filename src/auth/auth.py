@@ -10,10 +10,10 @@ from src.auth.security import (
 
 def create_master_password(password_db):
     """Создание нового мастер-пароля."""
-    print("Мастер-пароль не задан.")
+    print("\nМастер-пароль не задан.")
     while True:
         input_master_password = input("Введите ваш новый мастер пароль: ")
-        if len(input_master_password) >= 5:
+        if len(input_master_password) >= 9:
             hash_password = hash_master_password(input_master_password)
             add_new_data_settings("master_password", hash_password, password_db)
 
@@ -23,7 +23,7 @@ def create_master_password(password_db):
             print("Мастер-пароль добавлен успешно!")
             return input_master_password
         else:
-            print("\nПароль должен быть не менее 5 символов!\n")
+            print("\nПароль должен быть не менее 9 символов!\n")
 
 
 def verify_master_password(password_db):

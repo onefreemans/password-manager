@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
 from src.crypto.password_hash import check_master_password
+from src.auth.db_auth import JSON_PATH
+from src.db.database import DB_PATH
+import os
 from src.db.models import (
     get_setting_value,
     add_new_data_settings,
     delete_settings_by_key,
-    delete_settings_by_all,
-    delete_all_applications,
     increment_failed_attempts,
     reset_failed_attempts,
 )
@@ -17,7 +18,7 @@ def check_bruteforce_protection(lock_until_str, password_db):
     failed_count = int(failed_str) if failed_str else 0
 
     if failed_count >= 3 and not lock_until_str:
-        lock_until = datetime.now() + timedelta(hours=1)
+        lock_until = datetime.now() + timedelta(hours=1) #TODO: блокировка
         add_new_data_settings("lock_until", lock_until.isoformat(), password_db)
         print("Слишком много неверных попыток. Доступ заблокирован на 1 час.")
         exit()
@@ -63,9 +64,11 @@ def handle_final_attempts(master_password_hash, password_db):
             add_new_data_settings("final_attempts", str(final_left), password_db)
         print("Пароль неверный ❌\n")
 
-    delete_settings_by_all(password_db)
-    delete_all_applications(password_db)
-    delete_settings_by_key("final_attempts", password_db)
+    # delete_settings_by_all(password_db)
+    # delete_all_applications(password_db)
+    # delete_settings_by_key("final_attempts", password_db)
+    os.remove(DB_PATH)
+    os.remove(JSON_PATH)
     print("Все попытки исчерпаны. Данные удалены. Программа завершена.")
     exit()
 
@@ -100,7 +103,7 @@ def handle_regular_login(master_password_hash, password_db):
             print(f"\nПодсказка❗ {help_hint}")
 
         if count == 0:
-            lock_until = datetime.now() + timedelta(hours=1)
+            lock_until = datetime.now() + timedelta(hours=1) #TODO: блокировка
             add_new_data_settings("lock_until", lock_until.isoformat(), password_db)
             print("Вы истратили все попытки. Попробуйте через 1 час.")
             exit()
