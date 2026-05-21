@@ -64,9 +64,6 @@ def handle_final_attempts(master_password_hash, password_db):
             add_new_data_settings("final_attempts", str(final_left), password_db)
         print("Пароль неверный ❌\n")
 
-    # delete_settings_by_all(password_db)
-    # delete_all_applications(password_db)
-    # delete_settings_by_key("final_attempts", password_db)
     os.remove(DB_PATH)
     os.remove(JSON_PATH)
     print("Все попытки исчерпаны. Данные удалены. Программа завершена.")
